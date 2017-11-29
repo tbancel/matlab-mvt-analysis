@@ -1,0 +1,29 @@
+function coord = extract_coordinates(M,names_list)
+
+% function extracting the coordinates of the markers listed in the cell list
+%: names_list from the structure M (obtained from the read_data_csv
+% function). The coordinates are in the matrix coord
+
+coord = [];
+% si la matrice de coordonnees est nulle on renvoie une matrice de 0
+if M.coord == 0
+    taille1=size(names_list,2);
+    taille2=size(M.coord,1);
+    coord=zeros(taille1,3,taille2);
+else
+    % comparaison des 2 listes
+    T = compare_liste(names_list,M.noms);
+
+    %modif du 12 février 2007 par H Goujon pour mettre des Nan quand le
+    %l'élément de liste noms n'est pas trouvés dans M.noms
+    for j=1:size(names_list,2)
+        indice_colonne = find(T(j,:)==1);
+        if isempty(indice_colonne)
+           coordonnees_permutees = NaN*ones(1,3,size(M.coord,1));
+             coord = [coord;coordonnees_permutees];
+        else
+           coordonnees_permutees = permute(M.coord(:,3*indice_colonne-2:3*indice_colonne),[3,2,1]);
+            coord = [coord;coordonnees_permutees];
+        end;
+    end;
+end;
